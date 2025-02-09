@@ -1,0 +1,11 @@
+services:
+  terraform:
+    image: hashicorp/terraform:1.10.3
+    volumes:
+      - ./static:/tf/static
+    working_dir: /tf
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_DEFAULT_REGION=us-west-1
