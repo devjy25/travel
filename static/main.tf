@@ -2,20 +2,6 @@ provider "aws" {
   region = "us-east-1" # Change to your preferred AWS region
 }
 
-# S3 Bucket
-# resource "aws_s3_bucket" "selected" {
-#   bucket = "guiling2025" # Must be globally unique
-# }
-
-# Disable ACLs and enforce ownership
-# resource "aws_s3_bucket_ownership_controls" "selected" {
-#   bucket = aws_s3_bucket.selected.id
-#   rule {
-#     object_ownership = "BucketOwnerEnforced"
-#   }
-# }
-
-# Configure public access (required for static selected)
 resource "aws_s3_bucket_public_access_block" "selected" {
   bucket = aws_s3_bucket.selected.id
 
@@ -43,16 +29,12 @@ data "aws_iam_policy_document" "selected" {
 }
 
 locals {
-  # Step 1: Get all files using fileset (glob pattern)
   all_files = fileset(".", "**/*")
 
-  # Step 2: Filter files using regex
   filtered_files = [
     for file in local.all_files :
     file if can(regex("\\.(jpg|png|html)$", file))
   ]
-
-  # Step 3: Create source paths for filtered files
   static_files = {
     for file in local.filtered_files :
     file => {
@@ -65,7 +47,6 @@ locals {
     }
   }
 }
-
 
 resource "aws_s3_object" "bulk_upload" {
   for_each     = local.static_files
@@ -131,8 +112,6 @@ resource "aws_route53_record" "example" {
 
   alias {
     name = aws_s3_bucket.selected.website_domain
-    # "s3-website-us-east-1.amazonaws.com"
-    # 
     zone_id                = aws_s3_bucket.selected.hosted_zone_id
     evaluate_target_health = false
   }
