@@ -137,7 +137,7 @@ dmypy.json
 
 # Local .terraform directories
 **/.terraform/*
-/Users/sarazou/Documents/travel/static/*.lock.hcl
+**/*.lock.hcl
 
 # .tfstate files
 *.tfstate
